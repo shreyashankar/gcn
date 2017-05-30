@@ -4,6 +4,7 @@ import networkx as nx
 import scipy.sparse as sp
 from scipy.sparse.linalg.eigen.arpack import eigsh
 import sys
+import random
 
 
 def parse_index_file(filename):
@@ -20,6 +21,36 @@ def sample_mask(idx, l):
     mask[idx] = 1
     return np.array(mask, dtype=np.bool)
 
+def load_connectome_data():
+    adj =  pickle.load( open( "preprocess/adj.p", "r" ) )
+    features = pickle.load( open( "preprocess/features.p", "r" ) )
+    labels = pickle.load( open( "preprocess/labels.p", "r" ) )
+
+    N = features.shape[0]
+    D = features.shape[1]
+    E = labels.shape[1]
+
+    idx = np.random.permutation(range(N))
+
+    idx_train = idx[: int(0.05 * N)]
+    idx_val = [int(0.05 * N): int(0.6 * N)]
+    idx_test = [int(0.6 * N):]
+
+    y_train = np.zeros((N, D))
+    for i in idx_train:
+        y_train[i] = features[i]
+    y_val = np.zeros((N, D))
+    for i in idx_val:
+        y_val[i] = features[i]
+    y_test = np.zeros((N, D))
+    for i in idx_test:
+        y_test[i] = features[i]
+
+    train_mask = sample_mask(idx_train, N)
+    val_mask = sample_mask(idx_val, N)
+    test_mask = sample_mask(idx_test, N)
+
+    return adj, features, y_train, y_val, y_test, train_mask, val_mask, test_mask
 
 def load_data(dataset_str):
     """Load data."""
