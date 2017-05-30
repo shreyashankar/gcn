@@ -22,13 +22,13 @@ def sample_mask(idx, l):
     return np.array(mask, dtype=np.bool)
 
 def load_connectome_data():
-    adj =  pickle.load( open( "adjacency.p", "r" ) )
-    features = pickle.load( open( "features.p", "r" ) )
-    labels = pickle.load( open( "labels.p", "r" ) )
+    adj =  pickle.load( open( "preprocess/adj.p", "r" ) )
+    features = pickle.load( open( "preprocess/features.p", "r" ) )
+    labels = pickle.load( open( "preprocess/labels.p", "r" ) )
 
-    N = adj.shape[0]
+    N = features.shape[0]
     D = features.shape[1]
-    E = features.shape[2]
+    E = labels.shape[1]
 
     idx = np.random.permutation(range(N))
 
