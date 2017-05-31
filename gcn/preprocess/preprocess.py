@@ -2,17 +2,27 @@ import json
 import numpy as np
 import argparse
 from sklearn.preprocessing import LabelEncoder
+import pickle
+
+def binary_one_hot_encode(df, col):
+	le = LabelEncoder()
+	y = (le.fit_transform(df[:,col])).astype(int)
+	y_one_hot = np.zeros((y.size, y.max()+1))
+	for i in range(0, len(y)):
+		y_one_hot[i][y[i]] = 1
+	rejoined = np.concatenate([df[:,:col], y_one_hot, df[:,col+1:]], axis=1)
+	return rejoined
 
 def one_hot_encode(all_features):
 	le = LabelEncoder()
+	all_features_float = np.zeros_like(all_features)
 	for col in range(all_features.shape[1]):
 		try:
-			all_features[:,col] = all_features[:,col].astype(float)
+			all_features_float[:,col] = all_features[:,col].astype(float)
 		except ValueError:
-			print "Not a float"
-			print all_features[0,col]
-			all_features[:,col] = le.fit_transform(all_features[:,col])
-	return all_features
+			transformed = le.fit_transform(all_features[:,col])
+			all_features_float[:,col] = transformed.reshape(all_features.shape[0],1)
+	return all_features_float
 
 def getNodeFeatures(rawFile):
 	"""
@@ -42,20 +52,19 @@ def getNodeFeatures(rawFile):
 		counter += 1
 
 	df = np.asmatrix(np.concatenate(feature_array), dtype='O')
-	print df.shape
 	class_index = key_array.index('Class')
-	print class_index
 	df_classes = np.column_stack([df[:,0], df[:,class_index]])
-	print df_classes.shape
-	df_feat = np.array(df[-class_index])
+	df_out_classes = binary_one_hot_encode(df_classes, 1)
 
-	df_out_classes = one_hot_encode(df_classes)
+	df_feat = np.delete(df, class_index, axis=1)
 	df_out_feat = one_hot_encode(df_feat)
 
 	return df_out_classes, df_out_feat
 
 def main():
-	getNodeFeatures("neuronsinfo.json")
+	labels, features = getNodeFeatures("neuronsinfo.json")
+	pickle.dump(labels, open( "labels.p", "wb" ))
+	pickle.dump(features, open( "features.p", "wb" ))
 
 
 if __name__ == '__main__':
