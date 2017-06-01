@@ -2,6 +2,7 @@ import numpy as np
 import pickle as pkl
 import networkx as nx
 import scipy.sparse as sp
+from scipy.sparse import csr_matrix
 from scipy.sparse.linalg.eigen.arpack import eigsh
 import sys
 import random
@@ -22,9 +23,11 @@ def sample_mask(idx, l):
     return np.array(mask, dtype=np.bool)
 
 def load_connectome_data():
-    adj =  pickle.load( open( "preprocess/adj.p", "r" ) )
-    features = pickle.load( open( "preprocess/features.p", "r" ) )
-    labels = pickle.load( open( "preprocess/labels.p", "r" ) )
+    # Load data
+    adj =  pkl.load( open( "preprocess/adj.p", "r" ) )
+    features = pkl.load( open( "preprocess/features.p", "r" ) )
+    features = csr_matrix(features.astype(np.float32)).tolil()
+    labels = pkl.load( open( "preprocess/labels.p", "r" ) )
 
     N = features.shape[0]
     D = features.shape[1]
@@ -32,19 +35,19 @@ def load_connectome_data():
 
     idx = np.random.permutation(range(N))
 
-    idx_train = idx[: int(0.05 * N)]
-    idx_val = [int(0.05 * N): int(0.6 * N)]
-    idx_test = [int(0.6 * N):]
+    idx_train = idx[:int(0.5 * N)]
+    idx_val = idx[int(0.5 * N):int(0.6 * N)]
+    idx_test = idx[int(0.6 * N):]
 
-    y_train = np.zeros((N, D))
+    y_train = np.zeros((N, E))
     for i in idx_train:
-        y_train[i] = features[i]
-    y_val = np.zeros((N, D))
+        y_train[i] = labels[i]
+    y_val = np.zeros((N, E))
     for i in idx_val:
-        y_val[i] = features[i]
-    y_test = np.zeros((N, D))
+        y_val[i] = labels[i]
+    y_test = np.zeros((N, E))
     for i in idx_test:
-        y_test[i] = features[i]
+        y_test[i] = labels[i]
 
     train_mask = sample_mask(idx_train, N)
     val_mask = sample_mask(idx_val, N)

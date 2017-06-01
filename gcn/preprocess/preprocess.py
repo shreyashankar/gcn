@@ -1,5 +1,6 @@
 import json
 import numpy as np
+import copy
 import argparse
 from sklearn.preprocessing import LabelEncoder
 import pickle
@@ -28,7 +29,7 @@ def getNodeFeatures(rawFile):
 	"""
 		Generate the N*F feature file and N*E output files
 	"""
-	with open(rawFile) as data_file:    
+	with open(rawFile) as data_file:
 		json_object = json.load(data_file)
 
 	feature_array = []
@@ -46,7 +47,7 @@ def getNodeFeatures(rawFile):
 						key_array += [element_key + "." + subelement_key]
 			else:
 				node_array += [element_val]
-				if(counter == 0): 
+				if(counter == 0):
 					key_array += [element_key]
 		feature_array.append([node_array])
 		counter += 1
@@ -54,22 +55,30 @@ def getNodeFeatures(rawFile):
 	df = np.asmatrix(np.concatenate(feature_array), dtype='O')
 	class_index = key_array.index('Class')
 	df_classes = np.column_stack([df[:,0], df[:,class_index]])
-	df_out_classes = binary_one_hot_encode(df_classes, 1)
+	df_out_classes = binary_one_hot_encode(df_classes, 1).astype(np.int32)
 
 	df_feat = np.delete(df, class_index, axis=1)
 	df_out_feat = one_hot_encode(df_feat)
 
 	return df_out_classes, df_out_feat
 
+def get_id_map(M):
+	new_M = copy.deepcopy(M)
+	col = new_M[:, 0]
+	idx_map = {}
+	for i in range(len(col)):
+		idx_map[i] = int(col[i])
+	return idx_map
+
 def main():
 	labels, features = getNodeFeatures("neuronsinfo.json")
+	idx_map = get_id_map(labels)
+	labels = np.delete(labels, [0], axis=1)
+	features = np.delete(features, [0], axis=1)
 	pickle.dump(labels, open( "labels.p", "wb" ))
 	pickle.dump(features, open( "features.p", "wb" ))
+	pickle.dump(idx_map, open( "idx.p", "wb" ))
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
