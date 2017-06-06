@@ -29,6 +29,7 @@ class Model(object):
 
         self.loss = 0
         self.accuracy = 0
+
         self.optimizer = None
         self.opt_op = None
 
@@ -108,6 +109,8 @@ class MLP(Model):
     def _accuracy(self):
         self.accuracy = masked_accuracy(self.outputs, self.placeholders['labels'],
                                         self.placeholders['labels_mask'])
+        #added avgupta
+        self.acc_sum = tf.summary.scalar('accuracy', self.accuracy)
 
     def _build(self):
         self.layers.append(Dense(input_dim=self.input_dim,
