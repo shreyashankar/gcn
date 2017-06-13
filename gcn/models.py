@@ -171,10 +171,18 @@ class GCN_Hybrid(Model):
                                             logging=self.logging))
 
         self.layers.append(Dense(input_dim=FLAGS.hidden1,
+                                output_dim=FLAGS.hidden1,
+                                placeholders=self.placeholders,
+                                act=tf.nn.relu,
+                                dropout=False,
+                                logging=self.logging))
+
+
+        self.layers.append(Dense(input_dim=FLAGS.hidden1,
                                 output_dim=self.output_dim,
                                 placeholders=self.placeholders,
                                 act=lambda x: x,
-                                dropout=True,
+                                dropout=False,
                                 logging=self.logging))
 
     def predict(self):
