@@ -35,8 +35,9 @@ def load_connectome_data():
 
     idx = np.random.permutation(range(N))
 
-    idx_train = idx[:int(0.1 * N)]
-    idx_val = idx[int(0.1 * N):int(0.6 * N)]
+    data_percent = 0.1
+    idx_train = idx[:int(data_percent * N)]
+    idx_val = idx[int(data_percent * N):int(0.6 * N)]
     idx_test = idx[int(0.6 * N):]
 
     y_train = np.zeros((N, E))
