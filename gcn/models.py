@@ -173,10 +173,9 @@ class GCN_Hybrid(Model):
         self.layers.append(Dense(input_dim=FLAGS.hidden1,
                                 output_dim=FLAGS.hidden1,
                                 placeholders=self.placeholders,
-                                act=tf.nn.relu,
-                                dropout=False,
+                                act=lambda x: x,
+                                dropout=True,
                                 logging=self.logging))
-
 
         self.layers.append(Dense(input_dim=FLAGS.hidden1,
                                 output_dim=self.output_dim,
