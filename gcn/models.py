@@ -170,13 +170,7 @@ class GCN_Hybrid(Model):
                                             sparse_inputs=True,
                                             logging=self.logging))
 
-        self.layers.append(GraphConvolution(input_dim=FLAGS.hidden1,
-                                            output_dim=self.output_dim,
-                                            placeholders=self.placeholders,
-                                            act=lambda x: x,
-                                            dropout=True,
-                                            logging=self.logging))
-        self.layers.append(Dense(input_dim=self.output_dim,
+        self.layers.append(Dense(input_dim=FLAGS.hidden1,
                                 output_dim=self.output_dim,
                                 placeholders=self.placeholders,
                                 act=lambda x: x,
@@ -234,5 +228,3 @@ class GCN(Model):
 
     def predict(self):
         return tf.nn.softmax(self.outputs)
-
-
