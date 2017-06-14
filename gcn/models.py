@@ -181,7 +181,7 @@ class GCN_Hybrid(Model):
                                 output_dim=self.output_dim,
                                 placeholders=self.placeholders,
                                 act=lambda x: x,
-                                dropout=True,
+                                dropout=False,
                                 logging=self.logging))
 
     def predict(self):

@@ -21,12 +21,12 @@ flags.DEFINE_string('model', 'gcn_hybrid', 'Model string.')  # 'gcn', 'gcn_cheby
 flags.DEFINE_float('learning_rate', 0.010, 'Initial learning rate.')
 flags.DEFINE_integer('epochs', 3000, 'Number of epochs to train.')
 flags.DEFINE_integer('hidden1', 256, 'Number of units in hidden layer 1.') #originally 64
-flags.DEFINE_float('dropout', 0.3, 'Dropout rate (1 - keep probability).')
+flags.DEFINE_float('dropout', 0.5, 'Dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 5e-4, 'Weight for L2 loss on embedding matrix.')
 flags.DEFINE_integer('early_stopping', 1000, 'Tolerance for early stopping (# of epochs).')
 flags.DEFINE_integer('max_degree', 3, 'Maximum Chebyshev polynomial degree.')
 flags.DEFINE_string('summaries_dir', "./logs", "Logs directory")
-flags.DEFINE_string('run_name', "gcn_512_dropout_0.3", "Run name")
+flags.DEFINE_string('run_name', "gcn_hybrid_denseFirst_1", "Run name")
 
 # import pdb; pdb.set_trace()
 
